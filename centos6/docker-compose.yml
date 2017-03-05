@@ -1,0 +1,108 @@
+---
+#
+#    CentOS 6 (centos6) docker-compose.yml
+#    Copyright (C) 2017 SOL-ICT
+#    This file is part of the Nodejs.Stack.Docker.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+# For Docker Compose v2.1+ only
+version: '2.1'
+
+#
+# Services
+#
+services:
+
+  nodejs:
+    labels:
+      org.label-schema.schema-version: "1.0.0-rc.1"
+      org.label-schema.name: "$PROJECT_NAME - Nodejs service"
+      org.label-schema.description: "Based on $PROJECT_FROM - Minimal service"
+      org.label-schema.keywords: "stack, nodejs"
+      org.label-schema.authors.lpalgarvio.name: "Luís Pedro Algarvio"
+      org.label-schema.authors.lpalgarvio.email: "lp.algarvio@gmail.com"
+      org.label-schema.authors.lpalgarvio.homepage: "http://lp.algarvio.org"
+      org.label-schema.authors.lpalgarvio.role: "DevOps"
+      org.label-schema.vendor: "$PROJECT_VENDOR"
+      org.label-schema.license: "$PROJECT_LICENSE"
+      org.label-schema.url: "$PROJECT_URL"
+      org.label-schema.vcs-url: "$VCS_URL"
+      org.label-schema.vcs-branch: "$VCS_BRANCH"
+      org.label-schema.vcs-ref: "$VCS_REF"
+      org.label-schema.os-id: "$OS_ID"
+      org.label-schema.os-version-id: "$OS_VERSION_ID"
+      org.label-schema.os-architecture: "$OS_ARCH"
+      org.label-schema.version: "$BUILD_VERSION"
+      org.label-schema.build-date: "$BUILD_DATE"
+      org.label-schema.usage: "$VCS_URL/blob/$VCS_BRANCH/README.md"
+    image: "${PROJECT_ID}:${OS_ID}${OS_VERSION_ID}_nodejs"
+    build:
+      context: "./dockerfiles"
+      dockerfile: "nodejs.Dockerfile"
+      args:
+        app_nodejs_version: "4.7.3"
+        app_nodejs_arch: "x64"
+        app_nodejs_env: "production"
+        app_nodejs_user: "nodejs"
+        app_nodejs_group: "nodejs"
+        app_nodejs_home: "/srv/nodejs"
+        app_nodejs_src: "/srv/nodejs/src"
+        app_nodejs_data: "/srv/nodejs/data"
+    logging:
+      driver: "json-file"
+    networks:
+      - application
+      - backend
+    #links:
+    #  -
+    #depends_on:
+    #  -
+    #ports:
+    #  -
+    #expose:
+    #  -
+    volumes:
+      - app_data:/srv/nodejs/data
+    tmpfs:
+      - /run
+      - /tmp
+    #user: "nodejs"
+    working_dir: "/srv/nodejs/src"
+    command: ["/usr/local/bin/pm2-docker", "main.js", "-i", "max"]
+    healthcheck:
+      test: ["CMD", "pm2", "ping", "main"]
+      interval: 5m
+      timeout: 3s
+      retries: 3
+
+#
+# Networks
+#
+networks:
+  default:
+    driver: "bridge"
+  application:
+    driver: "bridge"
+  backend:
+    driver: "bridge"
+
+#
+# Volumes
+#
+volumes:
+  app_data:
+    driver: "local"
+
