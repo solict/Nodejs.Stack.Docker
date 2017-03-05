@@ -2,6 +2,13 @@
 Nodejs Stack recipes based on [Debian](https://www.debian.org/) and [CentOS](https://www.centos.org/) for [Docker](https://www.docker.com/).  
 Continues on [Docker General Purpose System Distro](https://github.com/solict/docker-general-purpose-system-distro) recipes.
 
+Requires [Docker Compose](https://docs.docker.com/compose/) 1.6.x or higher due to the [version 2](https://docs.docker.com/compose/compose-file/#versioning) format of the docker-compose.yml files.
+
+There are docker-compose.yml files per distribution, as well as docker-compose.override.yml and .env files, which may be used to override configuration.
+An optional [Makefile](../../tree/master/Makefile) is provided to help with loading these with ease and perform commands in batch.
+
+Scripts are also provided for each distribution to help test and deploy the installation procedures in non-Docker environments.
+
 The images are automatically built at a [repository](https://hub.docker.com/r/solict/nodejs.stack.docker) in the Docker Hub registry.
 
 ## Credits
